@@ -349,3 +349,75 @@ criptografada
 	}
 
 	export default CreateUserService;
+
+	# Validando Credenciais
+	- Criar rotas para as sessões do usuário:
+	> sessions.routes.ts
+		```
+		import { Router } from 'express';
+		import AuthenticateUserService from '../services/AuthenticateUserService';
+
+		const sessionsRouter = Router();
+
+		sessionsRouter.post('/', async (request, response) => {
+			try{
+				const { email, password } = request.body;
+
+				const authenticateUser = new AuthenticateUserService();
+
+				const user = await authenticateUser.execute({ email, password });
+
+				return response.json(user);
+			}catch(err){
+				return response.status(400).json({ error: err.message });
+			}
+		});
+
+		export default sessionsRouter;
+		```
+	> ./routes/index.ts
+	- Adicionar:
+
+	```
+		import sessionsRouter from './sessions.routes';
+		routes.use('/sessions', sessionsRouter);
+	```
+
+	> ./services/AuthenticateUserService.ts
+	```
+	import { getRepository } from 'typeorm';
+	import { compare } from 'bcryptjs';
+	import User from '../models/User';
+
+	interface Request {
+		email: string;
+		password: string;
+	}
+
+	interface Response{
+		user: User;
+	}
+
+	class AuthenticateUserService {
+		public async execute({ email, password }: Request)> Promise<Response>{
+			const usersRepository = getRepository(User);
+
+			const user = await usersRepository.findOne({ where: { email: email }});
+
+			if (!user){
+				throw new Error('Incorrect email/password combination.')'
+			}
+
+			const passwordMatched = await compare(password, user.password);
+
+			if (!passwordMatched){
+				throw new Error('Incorrect email/password combination.')'
+			}
+
+			return { user };
+		}
+	}
+
+	export default AuthenticateUserService;
+	```
+
