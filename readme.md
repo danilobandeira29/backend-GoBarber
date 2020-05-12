@@ -317,6 +317,7 @@ criptografada
 
 - No CreateUserService.ts
 
+	```
 	import { getRepository } from 'typeorm';
 	import User from '../models/User';
 	import { hash } from 'bcryptjs';
@@ -347,6 +348,7 @@ criptografada
 			return user;
 		}
 	}
+	```
 
 	export default CreateUserService;
 
