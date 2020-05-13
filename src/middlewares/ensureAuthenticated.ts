@@ -8,7 +8,7 @@ interface TokenPayLoad {
 	sub: string;
 }
 
-export default function ensuredAuthenticated(
+export default function ensureAuthenticated(
 	request: Request,
 	response: Response,
 	next: NextFunction,
