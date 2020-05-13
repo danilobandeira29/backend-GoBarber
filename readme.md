@@ -422,4 +422,269 @@ criptografada
 
 	export default AuthenticateUserService;
 	```
+# Rotas de Autenticação
+- Criar uma pasta middlewares
+- Criar pasta config/auth.ts
+```
+export default {
+	jwt: {
+		secret: '3188a07ade2d04a457f918bc8642f428', // md5 criado online
+		expiresIn: '1d',
+	}
+}
+```
+- Criar o middleware ensureAuthenticated.ts
+```
+import { Request, Response, NextFunction } from 'express';
+import { verify } from 'jsonwebtoken';
+import authConfig from '../config/auth';
 
+interface TokenPayLoad {
+	iat: number;
+	exp: number;
+	sub: string;
+}
+
+export default function ensureAuthenticated(request, response, next){
+	const authHeader = request.headers.authorization;
+
+	if (!authHeader) {
+		throw new Error ('JWT Token is missing!');
+	}
+
+	const [, token] = authHeader.split(' ');
+
+	try{
+		const decoded = verify(token, authConfig.jwt.secret);
+
+		const { sub } = decoded as TokenPayLoad // tipagem para o decoded,
+		que é uma string ou objeto, logo, o typescript não consegue definir a tipagem
+
+		request.user{
+			id: sub
+		}
+
+		return next();
+	} catch {
+		throw new Error('Invalid JWT Token!');
+	}
+```
+## Devo criar uma pasta chamada @types/express.d.ts para adicionar o objeto user.id
+```
+declare namespace Express {
+	export interface Request {
+		user: {
+			id: string;
+		};
+	}
+}
+```
+## Assim, o erro do request.user deve sumir
+
+- Utilizar o middleware ensureAuthenticated na rota de appointments
+
+```
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+
+appoinmentsRouter.use(ensureAuthenticated);
+```
+
+- Importar a authConfig para utilizar no AuthenticatedUser
+- Alterar no AuthenticateUserService os parametros do sign da biblioteca jsonwebtoken
+```
+import authConfig from '../config/auth';
+
+const { secret, expiresIn } = authConfig.jwt;
+
+const token = sign({}, secret, {
+	subject: user.id;
+	expiresIn,
+})
+
+return { user, token };
+```
+
+# Upload de Arquivos/Imagens;
+
+- Criar migration para atualizar a tabela do banco
+```
+yarn typeorm migration:create -n AddAvatarFieldToUsers;
+
+export default class ...{
+	public async up(queryRunner: QueryRunner): Promise<void>{
+		await queryRunner.addColumn('users', new TableColumn({
+			name: 'avatar',
+			type: 'varchar', //nunca armazenar no banco a imagem, apenas utilizar
+			o caminho dela e utilizar algum Content Delivery Network(CDN) para salvar
+			as imagens; Provisoriamente, serão salvados no disco local
+			isNullable: true,
+		}))
+	};
+
+	public async down(queryRunner: QueryRunner): Promise<void>{
+		await queryRunner.dropColumn('users', 'avatar');
+	}
+}
+```
+
+- Executar o comando:
+```
+yarn typeorm migration:run
+```
+- Verificar se a coluna foi criada na tabela users
+- Adicionar no userRoutes
+```
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
+
+usersRouter.patch('/avatar', ensureAuthenticated, (request, response) {
+	return response.json({ ok: true });
+})
+```
+
+- Fazer a criação da pasta tmp na raíz do projeto, para armazenar apenas as imagens
+(não criar na src, pois não possuí código)
+- e criar o .gitkeep na pasta tmp
+- Adicionar o .gitignore
+```
+tmp/*
+!tmp/.gitkeep
+```
+- Instalar a biblioteca multer para lidar com arquivos/imagens
+- Criar config/upload.ts
+```
+import multer from 'multer';
+import path from 'path'; //lidar com o diretório raíz, pois varia de acordo com
+o sistema
+import crypto from 'crypto'; //do proprio nodejs, nao precisa instalar
+
+export default {
+	storage: multer.diskStorage({
+		destination: path.resolve(__dirname, '..', '..', 'tmp');
+		filename(request, file, callback){
+			const fileHash = crypto.randomBytes(10).toString('HEX');
+
+			const fileName = `${fileHash}-${file.originalname}`;
+
+			return callback(null, filename); //recebe como parâmetro err | null e o
+			nome do arquivo
+		}
+	})
+}
+```
+
+- Ir na rota de User
+```
+import multer from 'multer';
+
+import uploadConfig from '../config/upload';
+
+const upload = multer(uploadConfig);//instancia do multer, agora posso utilizar
+os metódos dele (upload, array, none... entre outros)
+
+usersRouter.patch('/avatar',
+	ensureAuthenticated,
+	upload.single('avatar'),
+	(request, response){
+		return response.json({ ok: true });
+	}
+	)
+```
+
+- Ir no insomnia e criar a rota patch
+- Na rota patch, o body será agora do tipo 'Multipart Form', devo clicar e escolher
+como sendo arquivo, devo selecionar o arquivo no computador
+- E colocar essa variável do body com o nome de 'avatar'
+- Fazer a requisição e verificar se o arquivo de imagem está na pasta tmp
+- Posso utilizar o console.log(request.file) na rota para verificar o objeto e
+seus atributos
+
+# Atualizando Avatar
+- Criar um service para isso, pois haverá regras de negócio para guardar o avatar
+- Devo criar a coluna avatar no model de User
+- Ir no config/auth.ts
+
+```
+	const tmpFolder = path.resolve(__dirname, '..', '..', 'tmp');
+
+	export default {
+		storage: multer.diskStorage({
+			destination: tmpFolter,
+			filename(request, file, callback){
+				const fileHash = crypto.randomBytes(10).toString('HEX');
+				const fileName = `${fileHash}-${file.originalname}`;
+
+				return callback(null, fileName);
+			}
+		})
+	}
+```
+- UpdateUserAvatarService.ts
+
+```
+import { getRepository } from 'typeorm';
+import User from '../models/User';
+import path from 'path'; //path para resolver os caminhos do próprio nodejs
+import fs from 'fs'; //filesystem do nodejs
+import authConfig from '../config/auth';
+
+interface Request {
+	user_id: string;
+	avatarFilename: string;
+}
+
+class UpdateUserAvatarService {
+
+	public async execute({ user_id, avatarFilename}: Request): Promise<User>{
+		const usersRepository = getRepository(User);
+
+		const user = await usersRepository.findOne(user_id);
+
+		if (!user){
+			throw new Error('Only authenticated can change avatar');
+		}
+
+		if (user.avatar){
+			const userAvatarFilePath = path.join(authConfig.directory, user.avatar);
+			const userAvatarFileExists = await fs.promises.stat(userAvatarFilePath);
+
+			if(userAvatarFileExists){
+				await fs.promises.unlink(userAvatarFilePath);
+			}
+
+		}
+
+		user.avatar = avatarFilename;
+
+		await userRepository.save(user); //se o usuário já existe, como verificado
+		acima, ele irá apenas atualizar aquele usuário no banco
+
+		return user; //
+	}
+}
+
+export default UpdateUserAvatarService;
+```
+
+- Ir nas rotas user
+```
+usersRouter.patch('/avatar',
+	ensureAuthenticated,
+	upload.single('avatar'),
+	async (request, response) {
+		try{
+			const updateUserAvatar = new UpdateUserAvatarService();
+
+			const user = await updateUserAvatar.execute({
+				user_id: request.user.id,
+				avatarFilename: request.file.filename,
+			})
+
+			delete user.password;
+
+			return response.json(user);
+		} catch(err) {
+			return response.status(400).json({ error: err.message });
+		}
+	}
+	)
+```
