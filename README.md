@@ -7,7 +7,7 @@
 - Prettier
 - TypeORM
 - Postgres
-- JWT(Json Web Token)
+- JWT(JSON Web Token)
 
 ## Instalando as Dependências
 Com o terminal aberto na pasta raíz do diretório da aplicação, basta executar o comando:
@@ -30,4 +30,4 @@ npm dev:server
 ```
 
 
-# > Está aplicação continua em construção
+# Está aplicação continua em construção
