@@ -1,4 +1,4 @@
-# backend-GoBarber
+# Backend - GoBarber
 ## Tecnologias utilizadas(até o momento)
 - NodeJS
 - ExpressJS
@@ -6,6 +6,7 @@
 - ESLint
 - Prettier
 - TypeORM
+- Docker
 - Postgres
 - JWT(JSON Web Token)
 
