@@ -131,7 +131,11 @@ This is the Backend of GoBarber, where a user can make appointments that will be
 
 ---
 ## 🚀 Initialize the Project
-- Open your terminal on the project folder and execute:
+- Open your terminal and execute:
+```bash
+	$ docker start gostack_postgres
+```
+- With the database running, open the terminal on the project folder and execute:
 ```bash
   ## initialize the project (or you can use 'npm dev:server')
   $ yarn dev:server
@@ -268,7 +272,11 @@ Backend da aplicação GoBarber, onde um usuário pode marcar compromissos que s
 
 ---
 ## 🚀 Inicializando o Projeto
-- Abra o seu terminal na pasta do projeto e execute:
+- Abra o seu terminal e execute:
+```bash
+	$ docker start gostack_postgres
+```
+- Com o banco de dados executando, abra o terminal na pasta do projeto e execute:
 ```bash
   ## inicializar o projeto (ou você pode executar 'npm dev:server')
   $ yarn dev:server
