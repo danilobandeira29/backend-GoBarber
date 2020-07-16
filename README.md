@@ -11,6 +11,7 @@
 - [Database](#-Database)
 	- [Requeried programs](#-Required-programs)
 	- [Installation](#-Installation)
+- [Initialize the project](#-Initialize-the-project)
 
 ## 📝 About
 This is the Backend of GoBarber, where a user can make appointments that will be attended by a provider.
@@ -54,6 +55,7 @@ This is the Backend of GoBarber, where a user can make appointments that will be
 
 ```
 ## 📅 Database
+
 ### Required programs
 - Docker
 - DBeaver
@@ -128,8 +130,8 @@ This is the Backend of GoBarber, where a user can make appointments that will be
 </p>
 
 ---
-## Initialize the Project
-- Open your terminal on the project folder and execute
+## 🚀 Initialize the Project
+- Open your terminal on the project folder and execute:
 ```bash
   ## initialize the project (or you can use 'npm dev:server')
   $ yarn dev:server
@@ -143,7 +145,10 @@ This is the Backend of GoBarber, where a user can make appointments that will be
 - [Tecnologias](#-Tecnologias)
 - [Formatadores de Código](#-Formatadores-de-Código)
 - [Clonar o Projeto](#-Clonar-o-Projeto)
-
+- [Banco de Dados](#-Banco-de-Dados)
+	- [Programas necessários](#-Programas-necessários)
+	- [Instalando](#-Instalando)
+- [Inicializando o Projeto](#-Inicializando-o-Projeto)
 
 ## 📝 Sobre
 Backend da aplicação GoBarber, onde um usuário pode marcar compromissos que serão atendidos por um provedor. Também inclui login para utilização dessas funcionalidades.
@@ -187,6 +192,7 @@ Backend da aplicação GoBarber, onde um usuário pode marcar compromissos que s
 ```
 
 ## 📅 Banco de Dados
+
 ### Programas necessários:
 
 - Docker
@@ -261,7 +267,7 @@ Backend da aplicação GoBarber, onde um usuário pode marcar compromissos que s
 </p>
 
 ---
-## Inicializando o Projeto
+## 🚀 Inicializando o Projeto
 - Abra o seu terminal na pasta do projeto e execute:
 ```bash
   ## inicializar o projeto (ou você pode executar 'npm dev:server')
