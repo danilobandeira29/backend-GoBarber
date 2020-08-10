@@ -80,9 +80,4 @@ describe('ResetPassword', () => {
 			resetPassword.execute({ token, password: '4444' }),
 		).rejects.toBeInstanceOf(AppError);
 	});
-
-	// [x] hash
-	// [] 2h expiração
-	// [x] userToken inexistente
-	// [x] user inexistente
 });
