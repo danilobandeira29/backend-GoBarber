@@ -12,7 +12,7 @@ class ResetPasswordController {
 
 		await resetPassword.execute({ token, password });
 
-		return response.status(200);
+		return response.status(200).json();
 	}
 }
 
