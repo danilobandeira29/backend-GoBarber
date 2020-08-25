@@ -18,7 +18,7 @@ class SESMailProvider implements IMailProvider {
 		this.client = nodemailer.createTransport({
 			SES: new AWS.SES({
 				apiVersion: '2010-12-01',
-				region: 'us-east-2',
+				region: 'sa-east-1',
 			}),
 		});
 	}
