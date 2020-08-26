@@ -27,10 +27,7 @@ class ListProvidersService {
 				except_user_id: user_id,
 			});
 
-			await this.cacheProvider.save(
-				`providers-list:${user_id}`,
-				JSON.stringify(users),
-			);
+			await this.cacheProvider.save(`providers-list:${user_id}`, users);
 		}
 
 		return users;

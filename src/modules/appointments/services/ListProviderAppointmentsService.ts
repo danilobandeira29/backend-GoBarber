@@ -43,9 +43,7 @@ class ListProviderAppointmentsService {
 				},
 			);
 
-			console.log('query feita');
-
-			await this.cacheProvider.save(cacheKey, JSON.stringify(appointments));
+			await this.cacheProvider.save(cacheKey, appointments);
 		}
 
 		return appointments;
