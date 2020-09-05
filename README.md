@@ -27,11 +27,19 @@ This is the Backend of GoBarber, where a user can make appointments that will be
 - NodeJS
 - ExpressJS
 - Typescript
-- ESLint
-- Prettier
+- Test-Driven Development(TDD)
+- Domain-Driven Design(DDD)
+- SOLID
+- Amazon Web Services(S3, SES)
 - TypeORM
 - Docker
-- Postgres
+- PostgreSQL
+- MongoDB
+- Redis
+- Jest
+- Ethereal Mail
+- Handlebars
+- Tsyringe
 - JWT(JSON Web Token)
 
 ## 💅 Code formatters
@@ -168,11 +176,19 @@ Backend da aplicação GoBarber, onde um usuário pode marcar compromissos que s
 - NodeJS
 - ExpressJS
 - Typescript
-- ESLint
-- Prettier
+- Test-Driven Development(TDD)
+- Domain-Driven Design(DDD)
+- SOLID
+- Amazon Web Services(S3, SES)
 - TypeORM
 - Docker
-- Postgres
+- PostgreSQL
+- MongoDB
+- Redis
+- Jest
+- Ethereal Mail
+- Handlebars
+- Tsyringe
 - JWT(JSON Web Token)
 
 ## 💅 Formatadores de código
